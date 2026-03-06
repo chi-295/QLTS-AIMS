@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Thành công</title>
+<style>
+body{
+    font-family:Segoe UI;
+    background:#f0fdf4;
+    text-align:center;
+    padding-top:100px;
+}
+.card{
+    background:white;
+    display:inline-block;
+    padding:40px;
+    border-radius:15px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.08);
+}
+a{
+    text-decoration:none;
+    color:#2563eb;
+    font-weight:600;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h2 style="color:#16a34a;">✔ Báo cáo đã được gửi thành công</h2>
+
+<p>Tài sản: <b>{{ asset["ID_assets"] }}</b></p>
+
+<br>
+
+<a href="/asset/{{ asset['ID_assets'] }}">Quay lại tài sản</a>
+<br><br>
+<a href="/">Về trang chủ</a>
+
+</div>
+
+</body>
+</html>

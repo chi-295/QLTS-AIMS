@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Quét QR tài sản</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script src="https://unpkg.com/html5-qrcode@2.3.8"></script>
+
+<style>
+body {
+    margin: 0;
+    background: black;
+    font-family: Arial, sans-serif;
+}
+
+#reader {
+    width: 100%;
+    height: 100vh;
+}
+.status {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 16px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="reader"></div>
+<div class="status" id="status">Đang khởi động camera...</div>
+
+<script>
+
+const html5QrCode = new Html5Qrcode("reader");
+let scanned = false;
+
+function cleanID(text) {
+    let id = text.trim();
+    if (id.includes("/asset/")) {
+        id = id.split("/asset/")[1];
+    }
+    return id.replace(/\r?\n|\r/g, "");
+}
+
+function onScanSuccess(decodedText) {
+
+    if (scanned) return;
+    scanned = true;
+
+    let id = cleanID(decodedText);
+
+    document.getElementById("status").innerText = "Đã nhận: " + id;
+
+    html5QrCode.stop().then(() => {
+        window.location.href = "/asset/" + encodeURIComponent(id);
+    });
+}
+
+function onScanFailure(error) {
+    // bỏ qua
+}
+
+function startScanner() {
+
+    Html5Qrcode.getCameras().then(devices => {
+
+        if (!devices.length) {
+            alert("Không tìm thấy camera");
+            return;
+        }
+
+        let cameraId = devices[devices.length - 1].id; // luôn lấy cam cuối (thường là cam sau)
+
+        document.getElementById("status").innerText = "Đang quét...";
+
+        html5QrCode.start(
+            cameraId,
+            {
+                fps: 20,   // tăng fps
+                qrbox: 300, // khung lớn hơn
+                aspectRatio: 1.0,
+                experimentalFeatures: {
+                    useBarCodeDetectorIfSupported: true
+                }
+            },
+            onScanSuccess,
+            onScanFailure
+        );
+
+    }).catch(err => {
+        alert("Không mở được camera.\nCần HTTPS khi deploy.");
+        console.log(err);
+    });
+}
+
+window.onload = startScanner;
+
+</script>
+
+</body>
+</html>
