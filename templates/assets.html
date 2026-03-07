@@ -92,6 +92,22 @@ a.detail:hover{
 </head>
 
 <body>
+    /* ATS COLOR */
+
+.ats-good{
+    color:#16a34a;
+    font-weight:bold;
+}
+
+.ats-medium{
+    color:#f59e0b;
+    font-weight:bold;
+}
+
+.ats-bad{
+    color:#dc2626;
+    font-weight:bold;
+}
 
 <!-- SIDEBAR -->
 
@@ -123,7 +139,7 @@ a.detail:hover{
 
 <input type="text" name="type" placeholder="Tìm theo loại tài sản">
 
-<button type="submit">Tìm</button>
+<button type="submit">Tìm kiếm</button>
 
 </form>
 
@@ -148,7 +164,21 @@ a.detail:hover{
 <td>{{ asset["Floor"] }}</td>
 <td>{{ asset["Room"] }}</td>
 <td>{{ asset["Type_asset"] }}</td>
-<td>{{ asset["ATS"] }}</td>
+<td>
+
+{% set ats = asset["ATS"]|int %}
+
+{% if ats >= 90 %}
+<span class="ats-good">🟢 {{ ats }}</span>
+
+{% elif ats >= 70 %}
+<span class="ats-medium">🟡 {{ ats }}</span>
+
+{% else %}
+<span class="ats-bad">🔴 {{ ats }}</span>
+{% endif %}
+
+</td>
 
 <td>
 <a class="detail" href="/asset/{{ asset['ID_assets'] }}">
@@ -171,3 +201,4 @@ Chi tiết
 
 </body>
 </html>
+
