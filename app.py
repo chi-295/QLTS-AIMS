@@ -95,6 +95,10 @@ def update_ats(asset_id, minus):
     with open("aims.csv", newline="", encoding="utf-8") as f:
 
         reader = csv.DictReader(f)
+        fieldnames = reader.fieldnames   # lấy header thật của CSV
+
+        if "ATS" not in fieldnames:
+            fieldnames.append("ATS")
 
         for row in reader:
 
@@ -108,8 +112,6 @@ def update_ats(asset_id, minus):
             rows.append(row)
 
     with open("aims.csv", "w", newline="", encoding="utf-8") as f:
-
-        fieldnames = rows[0].keys()
 
         writer = csv.DictWriter(f, fieldnames=fieldnames)
 
@@ -412,6 +414,7 @@ if __name__ == "__main__":
 
 
     app.run(host="0.0.0.0", port=port, debug=True)
+
 
 
 
