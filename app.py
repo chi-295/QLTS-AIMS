@@ -42,7 +42,7 @@ def load_users():
 
     with open("users.csv", newline="", encoding="utf-8-sig") as f:
 
-        reader = csv.DictReader(f)
+        reader = csv.DictReader(f, delimiter=";")
 
         for row in reader:
             users[row["username"].strip()] = row
@@ -405,4 +405,5 @@ if __name__ == "__main__":
 
 
     app.run(host="0.0.0.0", port=port, debug=True)
+
 
