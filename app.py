@@ -95,17 +95,23 @@ def update_ats(asset_id, minus):
     with open("aims.csv", newline="", encoding="utf-8-sig") as f:
 
         reader = csv.DictReader(f)
-
-        fieldnames = reader.fieldnames  # lấy header thật
+        fieldnames = reader.fieldnames
 
         for row in reader:
 
+            # đảm bảo ATS luôn là số
+            ats_value = row.get("ATS")
+
+            if ats_value is None or ats_value == "":
+                ats_value = 100
+
+            ats = int(ats_value)
+
             if row.get("ID_assets", "").strip() == asset_id.strip():
 
-                ats = int(row.get("ATS", 100))
                 ats = max(0, ats - minus)
 
-                row["ATS"] = str(ats)
+            row["ATS"] = str(ats)
 
             rows.append(row)
 
@@ -114,7 +120,7 @@ def update_ats(asset_id, minus):
         writer = csv.DictWriter(
             f,
             fieldnames=fieldnames,
-            extrasaction="ignore"   # bỏ qua field dư
+            extrasaction="ignore"
         )
 
         writer.writeheader()
@@ -416,6 +422,7 @@ if __name__ == "__main__":
 
 
     app.run(host="0.0.0.0", port=port, debug=True)
+
 
 
 
