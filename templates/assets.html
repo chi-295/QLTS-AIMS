@@ -152,6 +152,9 @@ a.detail:hover{
 <th>Tầng</th>
 <th>Phòng</th>
 <th>Loại</th>
+<th>Năm</th>
+<th>Xuất xứ</th>
+<th>Tình trạng</th>
 <th>ATS</th>
 <th>Xem</th>
 </tr>
@@ -164,6 +167,9 @@ a.detail:hover{
 <td>{{ asset["Floor"] }}</td>
 <td>{{ asset["Room"] }}</td>
 <td>{{ asset["Type_asset"] }}</td>
+<td>{{ asset["Year"] }}</td>
+<td>{{ asset["Origin"] }}</td>
+<td>{{ asset["Status"] }}</td>
 <td>
 
 {% set ats = asset["ATS"]|int %}
@@ -201,5 +207,6 @@ Chi tiết
 
 </body>
 </html>
+
 
 
