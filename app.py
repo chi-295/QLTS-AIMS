@@ -60,7 +60,7 @@ def load_assets():
     if not os.path.exists("aims.csv"):
         return assets
 
-    with open("aims.csv", newline="", encoding="utf-8-sig") as f:
+    with open("aims.csv", newline="", encoding="utf-8") as f:
 
         reader = csv.DictReader(f)
 
@@ -402,5 +402,6 @@ def delete_abnormal():
 if __name__ == "__main__":
 
     port = int(os.environ.get("PORT", 5000))
+
 
     app.run(host="0.0.0.0", port=port, debug=True)
