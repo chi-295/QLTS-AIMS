@@ -40,7 +40,7 @@ def load_users():
     if not os.path.exists("users.csv"):
         return users
 
-    with open("users.csv", newline="", encoding="utf-8") as f:
+    with open("users.csv", newline="", encoding="utf-8-sig") as f:
 
         reader = csv.DictReader(f)
 
@@ -60,7 +60,7 @@ def load_assets():
     if not os.path.exists("aims.csv"):
         return assets
 
-    with open("aims.csv", newline="", encoding="utf-8") as f:
+    with open("aims.csv", newline="", encoding="utf-8-sig") as f:
 
         reader = csv.DictReader(f)
 
@@ -68,75 +68,50 @@ def load_assets():
 
             asset_id = row.get("ID_assets", "").strip()
 
-            if not asset_id:
-                continue
+            if asset_id:
 
+                if "ATS" not in row or row["ATS"] == "":
+                    row["ATS"] = "100"
 
-            # đảm bảo ATS luôn có
-            if not row.get("ATS"):
-                row["ATS"] = "100"
-
-            # làm sạch dữ liệu
-            for key in row:
-                if row[key]:
-                    row[key] = row[key].strip()
-
-            assets[asset_id] = row
+                assets[asset_id] = row
 
     return assets
 
+
 # =========================
-# CẬP NHẬT ĐIỂM ATS CỦA TÀI SẢN
+# CẬP NHẬT ATS
 # =========================
 def update_ats(asset_id, minus):
 
     rows = []
 
-    # mở file csv chứa danh sách tài sản
     with open("aims.csv", newline="", encoding="utf-8-sig") as f:
 
         reader = csv.DictReader(f)
 
-        # lấy danh sách cột
-        fieldnames = reader.fieldnames
-
         for row in reader:
 
-            # lấy giá trị ATS hiện tại
-            ats_value = row.get("ATS")
-
-            # nếu ATS trống thì mặc định = 100
-            if ats_value is None or ats_value == "":
-                ats_value = 100
-
-            ats = int(ats_value)
-
-            # nếu đúng tài sản cần cập nhật
             if row.get("ID_assets", "").strip() == asset_id.strip():
 
-                # trừ điểm ATS
+                ats = int(row.get("ATS", 100))
                 ats = max(0, ats - minus)
 
-            # cập nhật lại ATS
-            row["ATS"] = str(ats)
+                row["ATS"] = str(ats)
 
             rows.append(row)
 
-    # ghi lại toàn bộ dữ liệu vào file csv
     with open("aims.csv", "w", newline="", encoding="utf-8") as f:
 
-        writer = csv.DictWriter(
-            f,
-            fieldnames=fieldnames,
-            extrasaction="ignore"
-        )
+        fieldnames = rows[0].keys()
+
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
 
         writer.writeheader()
         writer.writerows(rows)
 
 
 # =========================
-# GHI CẢNH BÁO BẤT THƯỜNG
+# GHI ALERT
 # =========================
 def save_alert(user, asset_id, expected_room, scanned_room, alert_type, description=""):
 
@@ -146,7 +121,6 @@ def save_alert(user, asset_id, expected_room, scanned_room, alert_type, descript
 
         writer = csv.writer(f)
 
-        # nếu file chưa tồn tại thì tạo header
         if not file_exists:
             writer.writerow([
                 "user",
@@ -158,7 +132,6 @@ def save_alert(user, asset_id, expected_room, scanned_room, alert_type, descript
                 "time"
             ])
 
-        # ghi dữ liệu cảnh báo
         writer.writerow([
             user,
             asset_id,
@@ -262,14 +235,12 @@ def assets():
 @require_role(["admin","manager","user"])
 def asset_detail(asset_id):
 
-    # đọc danh sách tài sản
     assets = load_assets()
     asset = assets.get(asset_id)
 
     if not asset:
         return "Không tìm thấy tài sản"
 
-    # lấy thời gian hiện tại
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     room = asset.get("Room", "").strip()
@@ -277,7 +248,6 @@ def asset_detail(asset_id):
 
     file_exists = os.path.exists("scan_history.csv")
 
-    # ghi lịch sử quét
     with open("scan_history.csv", "a", newline="", encoding="utf-8") as f:
 
         writer = csv.writer(f)
@@ -293,13 +263,10 @@ def asset_detail(asset_id):
             now
         ])
 
-    # phòng được quét từ QR
     scanned_room = request.args.get("scan_room")
 
-    # nếu sai phòng
     if scanned_room and scanned_room != room:
 
-        # ghi cảnh báo
         save_alert(
             session["username"],
             asset_id,
@@ -308,17 +275,13 @@ def asset_detail(asset_id):
             "wrong_room"
         )
 
-        # trừ ATS
         update_ats(asset_id, 15)
-
-        # reload lại dữ liệu để ATS hiển thị mới
-        assets = load_assets()
-        asset = assets.get(asset_id)
 
     return render_template("asset.html", asset=asset)
 
+
 # =========================
-# BÁO HỎNG TÀI SẢN
+# BÁO HỎNG
 # =========================
 @app.route("/report/<asset_id>", methods=["GET", "POST"])
 @require_role(["admin","manager","user"])
@@ -334,7 +297,6 @@ def report(asset_id):
 
         description = request.form.get("description")
 
-        # ghi cảnh báo hỏng
         save_alert(
             session["username"],
             asset_id,
@@ -344,7 +306,6 @@ def report(asset_id):
             description
         )
 
-        # trừ 25 điểm ATS
         update_ats(asset_id, 25)
 
         return render_template("report_success.html", asset=asset)
@@ -442,16 +403,4 @@ if __name__ == "__main__":
 
     port = int(os.environ.get("PORT", 5000))
 
-
     app.run(host="0.0.0.0", port=port, debug=True)
-
-
-
-
-
-
-
-
-
-
-
