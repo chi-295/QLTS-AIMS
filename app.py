@@ -60,7 +60,7 @@ def load_assets():
     if not os.path.exists("aims.csv"):
         return assets
 
-    with open("aims.csv", newline="", encoding="utf-8") as f:
+    with open("aims.csv", newline="", encoding="utf-8-sig") as f:
 
         reader = csv.DictReader(f)
 
@@ -68,12 +68,19 @@ def load_assets():
 
             asset_id = row.get("ID_assets", "").strip()
 
-            if asset_id:
+            if not asset_id:
+                continue
 
-                if "ATS" not in row or row["ATS"] == "":
-                    row["ATS"] = "100"
+            # đảm bảo ATS luôn có
+            if not row.get("ATS"):
+                row["ATS"] = "100"
 
-                assets[asset_id] = row
+            # làm sạch dữ liệu
+            for key in row:
+                if row[key]:
+                    row[key] = row[key].strip()
+
+            assets[asset_id] = row
 
     return assets
 
@@ -405,6 +412,7 @@ if __name__ == "__main__":
 
 
     app.run(host="0.0.0.0", port=port, debug=True)
+
 
 
 
