@@ -158,8 +158,7 @@ a.detail:hover{
 <td>{{ asset["Year"] }}</td>
 <td>{{ asset["Origin"] }}</td>
 <td>{{ asset["Status"] }}</td>
-<td>{{ asset["ATS"] }}</td>
-<td>
+
 <td>
 {% if asset.ATS|int >= 90 %}
 🟢 {{ asset.ATS }}
@@ -169,6 +168,8 @@ a.detail:hover{
 🔴 {{ asset.ATS }}
 {% endif %}
 </td>
+
+<td>
 <a class="detail" href="/asset/{{ asset['ID_assets'] }}">
 Chi tiết
 </a>
@@ -189,4 +190,5 @@ Chi tiết
 
 </body>
 </html>
+
 
