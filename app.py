@@ -71,10 +71,6 @@ def load_assets():
             if not asset_id:
                 continue
 
-            # đảm bảo ATS luôn có
-            if not row.get("ATS"):
-                row["ATS"] = "100"
-
             # làm sạch dữ liệu
             for key in row:
                 if row[key]:
@@ -83,7 +79,6 @@ def load_assets():
             assets[asset_id] = row
 
     return assets
-
 
 # =========================
 # CẬP NHẬT ATS
@@ -422,6 +417,7 @@ if __name__ == "__main__":
 
 
     app.run(host="0.0.0.0", port=port, debug=True)
+
 
 
 
