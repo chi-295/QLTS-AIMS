@@ -1,5 +1,5 @@
 ID_assets,Auditorium,Floor,Room,Type_asset,Id_type,Ordinal number,Notes,ATS
-A2-01-0101-TB-01,A2,1,101,Desk( 2 seats),TB,1,,85
+A2-01-0101-TB-01,A2,1,101,bàn( 2 seats),TB,1,,85
 A2-01-0101-TB-02,A2,1,101,Desk( 2 seats),TB,2,,100
 A2-01-0101-TB-01,A2,1,101,Desk( 2 seats),TB,1,,85
 A2-01-0101-TB-02,A2,1,101,Desk( 2 seats),TB,2,,100
@@ -595,5 +595,6 @@ A2-GV-PN-GH-05,A2,,Lecturer's break room,Meeting chair,GH,5,Lecturer's pantry(wh
 A2-GV-PN-GH-06,A2,,Lecturer's break room,Meeting chair,GH,6,Lecturer's pantry(whole building),100
 A2-GV-PN-GU-01,A2,,Lecturer's break room,Mirror,GU,1,Lecturer's pantry(whole building),100
 A2-GV-PN-PN-01,A2,,Lecturer's break room,Thermos,PN,1,Lecturer's pantry(whole building),100
+
 
 
