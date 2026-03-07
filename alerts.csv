@@ -1,2 +1,3 @@
-user;asset_id;expected_room;scanned_room;type_alert;description;time
+user,asset_id,expected_room,scanned_room,type_alert,description,time
+
 
