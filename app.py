@@ -42,7 +42,7 @@ def load_users():
 
     with open("users.csv", newline="", encoding="utf-8-sig") as f:
 
-        reader = csv.DictReader(f, delimiter=";")
+        reader = csv.DictReader(f)
 
         for row in reader:
             users[row["username"].strip()] = row
@@ -62,7 +62,7 @@ def load_assets():
 
     with open("aims.csv", newline="", encoding="utf-8") as f:
 
-        reader = csv.DictReader(f, delimiter=";")
+        reader = csv.DictReader(f)
 
         for row in reader:
 
@@ -87,7 +87,7 @@ def update_ats(asset_id, minus):
 
     with open("aims.csv", newline="", encoding="utf-8-sig") as f:
 
-        reader = csv.DictReader(f, delimiter=";")
+        reader = csv.DictReader(f)
 
         for row in reader:
 
@@ -326,7 +326,7 @@ def history():
 
         with open("scan_history.csv", newline="", encoding="utf-8") as f:
 
-            reader = csv.DictReader(f, delimiter=";")
+            reader = csv.DictReader(f)
 
             for row in reader:
                 history.append(row)
@@ -347,7 +347,7 @@ def abnormal():
 
         with open("alerts.csv", newline="", encoding="utf-8") as f:
 
-            reader = csv.DictReader(f, delimiter=";")
+            reader = csv.DictReader(f)
 
             for row in reader:
                 abnormal_assets.append(row)
@@ -370,7 +370,7 @@ def delete_abnormal():
 
     with open("alerts.csv", newline="", encoding="utf-8") as f:
 
-        reader = csv.DictReader(f, delimiter=";")
+        reader = csv.DictReader(f)
 
         for row in reader:
             if row["asset_id"] != asset_id:
@@ -405,5 +405,6 @@ if __name__ == "__main__":
 
 
     app.run(host="0.0.0.0", port=port, debug=True)
+
 
 
