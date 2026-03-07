@@ -40,7 +40,7 @@ def load_users():
     if not os.path.exists("users.csv"):
         return users
 
-    with open("users.csv", newline="", encoding="utf-8-sig") as f:
+    with open("users.csv", newline="", encoding="utf-8") as f:
 
         reader = csv.DictReader(f)
 
@@ -60,7 +60,7 @@ def load_assets():
     if not os.path.exists("aims.csv"):
         return assets
 
-    with open("aims.csv", newline="", encoding="utf-8-sig") as f:
+    with open("aims.csv", newline="", encoding="utf-8") as f:
 
         reader = csv.DictReader(f)
 
@@ -92,7 +92,7 @@ def update_ats(asset_id, minus):
 
     rows = []
 
-    with open("aims.csv", newline="", encoding="utf-8-sig") as f:
+    with open("aims.csv", newline="", encoding="utf-8") as f:
 
         reader = csv.DictReader(f)
 
@@ -412,6 +412,7 @@ if __name__ == "__main__":
 
 
     app.run(host="0.0.0.0", port=port, debug=True)
+
 
 
 
