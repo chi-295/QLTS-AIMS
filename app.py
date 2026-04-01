@@ -199,6 +199,25 @@ def home():
 @app.route("/scan")
 @require_role(["admin","manager","user"])
 def scan_qr():
+
+    qr = request.args.get("qr")
+
+    if qr:
+        # ===== QUÉT PHÒNG =====
+        if qr.startswith("ROOM_"):
+            room = qr.replace("ROOM_", "")
+            session["current_room"] = room
+            return f"✅ Đã chọn phòng {room}"
+
+        # ===== QUÉT TÀI SẢN =====
+        else:
+            current_room = session.get("current_room")
+
+            if not current_room:
+                return "❌ Vui lòng quét phòng trước"
+
+            return redirect(f"/asset/{qr}?scan_room={current_room}")
+
     return render_template("scan.html")
 
 
