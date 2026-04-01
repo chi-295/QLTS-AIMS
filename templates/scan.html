@@ -188,93 +188,110 @@ let lastScanned = null
 let lastScanTime = 0
 
 function goBack(){
-window.history.back()
+    window.history.back()
 }
 
 function cleanID(text){
+    let id = text.trim()
 
-let id=text.trim()
+    if(id.includes("/asset/")){
+        id = id.split("/asset/")[1]
+    }
 
-if(id.includes("/asset/")){
-id=id.split("/asset/")[1]
-}
-
-return id.replace(/\r?\n|\r/g,"")
-
+    return id.replace(/\r?\n|\r/g,"")
 }
 
 function onScanSuccess(decodedText){
 
-let now = Date.now()
-let id = cleanID(decodedText)
+    let now = Date.now()
+    let id = cleanID(decodedText)
 
-/* tránh scan trùng trong 2 giây */
+    // tránh scan trùng
+    if(id === lastScanned && now - lastScanTime < 2000){
+        return
+    }
 
-if(id === lastScanned && now - lastScanTime < 2000){
-return
+    lastScanned = id
+    lastScanTime = now
+
+    console.log("QR:", id)
+
+    fetch("/api/asset/" + encodeURIComponent(id))
+    .then(res => res.json())
+    .then(data => {
+
+        if(data.status === "ok"){
+
+            let a = data.data
+
+            document.getElementById("success").style.display="block"
+            document.getElementById("assetCard").style.display="block"
+
+            document.getElementById("assetName").innerText = a.Type_asset
+            document.getElementById("assetID").innerText = a.ID_assets
+            document.getElementById("assetAud").innerText = a.Auditorium
+            document.getElementById("assetFloor").innerText = a.Floor
+            document.getElementById("assetRoom").innerText = a.Room
+            document.getElementById("assetType").innerText = a.Type_asset
+
+            // ✅ FIX: gán riêng từng nút
+            document.getElementById("reportBtn").onclick = function(){
+                window.location = "/report/" + a.ID_assets
+            }
+
+            document.getElementById("updateBtn").href = "/update_location/" + a.ID_assets
+
+            navigator.vibrate?.(200)
+
+        } else {
+            alert("❌ Không tìm thấy tài sản")
+        }
+
+    })
+    .catch(err => {
+        console.error(err)
+        alert("❌ Lỗi server")
+    })
+
 }
 
-lastScanned = id
-lastScanTime = now
-
-fetch("/api/asset/"+encodeURIComponent(id))
-.then(res=>res.json())
-.then(data=>{
-
-if(data.status==="ok"){
-
-let a=data.data
-
-document.getElementById("success").style.display="block"
-document.getElementById("assetCard").style.display="block"
-
-document.getElementById("assetName").innerText=a.Type_asset
-document.getElementById("assetID").innerText=a.ID_assets
-document.getElementById("assetAud").innerText=a.Auditorium
-document.getElementById("assetFloor").innerText=a.Floor
-document.getElementById("assetRoom").innerText=a.Room
-document.getElementById("assetType").innerText=a.Type_asset
-
-document.getElementById("reportBtn").onclick=function(){
-window.location="/report/"+a.ID_assets
-document.getElementById("updateBtn").href="/update_location/"+a.ID_assets
+function onScanFailure(error){
+    // bỏ qua để đỡ spam console
 }
-
-navigator.vibrate(200)
-
-}
-
-})
-
-}
-
-function onScanFailure(error){}
 
 function startScanner(){
 
-Html5Qrcode.getCameras().then(devices=>{
+    Html5Qrcode.getCameras()
+    .then(devices => {
 
-let cameraId = devices[devices.length-1].id
+        if(devices.length === 0){
+            alert("❌ Không tìm thấy camera")
+            return
+        }
 
-html5QrCode.start(
-cameraId,
-{
-fps:10,
-qrbox:{width:250,height:250},
-aspectRatio:1.0,
-disableFlip:true
-},
-onScanSuccess,
-onScanFailure
-)
+        let cameraId = devices[devices.length - 1].id
 
-})
+        html5QrCode.start(
+            cameraId,
+            {
+                fps: 10,
+                qrbox: {width:250,height:250},
+                aspectRatio:1.0
+            },
+            onScanSuccess,
+            onScanFailure
+        )
+
+    })
+    .catch(err => {
+        console.error(err)
+        alert("❌ Không mở được camera")
+    })
 
 }
 
-window.onload=startScanner
+window.onload = startScanner
 
 </script>
-
 </body>
 </html>
